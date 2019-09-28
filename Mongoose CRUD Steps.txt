@@ -1,0 +1,297 @@
+================================================================================================
+/** Step 01 - Create a new Project in new folder, 
+ex F:\mongoose_crud_emp>
+>npm init
+================================================================================================
+/** Step 02.a - Install express
+>npm i express --save
+
+/** Step 02.b - Install Nodemon
+>npm i nodemon --save-dev
+
+Add the below line in package.json under "script" object
+"dev": "nodemon server"
+then run Nodemon as below
+>npm run dev
+================================================================================================
+/** Step 03 - Create server.js as below
+
+const express  = require('express')// server.js
+const app      = express()
+
+app.get('/', (req, res)=>{// http:localhost:3000
+    res.send(`<h1>Home page</h1>`)
+})
+
+app.get('/employee', (req, res)=>{// http:localhost:3000/employee
+    res.send(`employee GET Request`)
+})
+
+app.listen(3000,()=>{
+    console.log(`Server is running at http:localhost:3000`)
+})
+================================================================================================
+/** Step 04 - Run server.js & Check in browser
+>npm run dev
+or
+>node server
+
+in browser
+http:localhost:3000				=> Home page
+http:localhost:3000/employee		=> employee GET Request
+================================================================================================
+/** Step 05 - Move the employee route(s) to separate file & folder
+a. Create a folder called routes
+b. Create a file called employee_r.js within routes folder
+
+Remove or comment in server.js
+
+/* app.get('/employee', (req, res)=>{
+    res.send(`Got employee GET Request`)
+}) */
+
+Add below lines in server.js
+// employee routes
+const routes_employee = require('./routes/employee_r');
+app.use('/employee', routes_employee);
+
+c. in routes\employee_r.js
+const express = require('express');
+const employee_router  = express.Router();
+
+employee_router.get('/', (req, res)=>{
+    res.send(`Got '/employee GET' Request...`)
+})
+
+module.exports = employee_router;
+
+test in Browser
+http://localhost:3000/employee				=> 	Got '/employee GET' Request...
+================================================================================================
+/** Step 06 - Install mongoose
+>npm i mongoose --save
+================================================================================================
+/** Step 07 - Include mongoose in server.js and connect to database
+const mongoose = require('mongoose');
+
+// connect database
+// mongoose.connect('mongodb://localhost:27017/amar_db', function(err, res){
+mongoose.connect('mongodb+srv://db_user1:pw_abc@cluster1-pmwqy.mongodb.net/amar_db?retryWrites=true', function(err, res){
+    if(!err){
+        console.log('connected to DB');
+    }
+});
+================================================================================================
+/** Step 08 - Create a Collection (Table) called employee_masters and 
+        insert 2 Documents (Records) in it
+
+{"employee_id": "emp001", "employee_name": "Employee One", "email_id": "emp001@gmail.com", "password": "123"}
+{"employee_id": "emp002", "employee_name": "Employee Two", "email_id": "emp002@gmail.com", "password": "234"}
+================================================================================================
+/** Step 09 - Store the employee_masters table structure
+a. Create a folder called models
+b. Create a file called employee_m.js within models folder
+
+const mongoose = require("mongoose");
+
+const employee_master = mongoose.model('employee_master', new mongoose.Schema({
+    employee_id: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    employee_name: {
+        type: String,
+        required: true
+    },
+    email_id: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    place: {
+        type: String,
+        required: false
+    }
+},{strict: true}));
+
+module.exports = employee_master;
+
+================================================================================================
+/** Step 10 - Create employee controllers
+a. Create a folder called controllers
+b. Create a file called employee_c.js within controllers folder
+
+var models_employee = require('../models/employee_m');
+
+module.exports = {
+    find_all: async (req, res)=>{// get all employees
+        try{
+            var employees = await models_employee.find().exec();
+            res.send(employees);
+        }catch(err){
+            res.status(500).send(err);
+        }
+    }
+}
+================================================================================================
+/** Step 11 - Change the routers\employee_r.js
+
+const express = require('express');
+const employee_router  = express.Router();
+
+var controllers_employee = require('../controllers/employee_c');
+
+/* employee_router.get('/', (req, res)=>{
+    res.send(`Got '/employee GET' Request***`)
+}) */
+//get all employees
+employee_router.get("/", controllers_employee.find_all);
+
+module.exports = employee_router;
+
+11.a Check
+http://localhost:3000/employee			=> Shows employee data in json
+================================================================================================
+/** Step 12 - To get any 1 employee
+
+a. add in routers\employee_r.js
+employee_router.get("/:id", controllers_employee.find_one);// get a selected employee
+
+b. add in controllers/employee_c.js    // add this new function
+    find_one: async (req, res)=>{// get a selected employee
+        try{
+            var employee = await models_employee.findById(req.params.id).exec();
+            res.send(employee);
+        }catch(err){
+            res.status(500).send(err);
+        }
+    }
+
+c. Check by passing any one _id, ex, http://localhost:3000/employee/5d62d1fc1c9d4400008512a6
+
+================================================================================================
+/** Step 13 - Insert a new Record
+a. Create a HTML form in add_employee.html and store in root folder
+
+<!DOCTYPE html>
+<html>
+    <title>employee.html</title>
+<body>
+    <h2>Add an employee</h2>
+<form action="http://localhost:3000/employee" method="POST">
+    employee_id:<br>
+    <input type="text" name="employee_id" placeholder="employee_id">
+    <br><br>
+    employee_name:<br>
+    <input type="text" name="employee_name" placeholder="employee_name">
+    <br><br>
+    artist_name:<br>
+    <input type="text" name="artist_name" placeholder="artist_name">
+    <br><br>
+    <input type="submit" value="Submit">
+</form> 
+
+</body>
+</html>
+
+b. in routes\employee_r.js add
+employee_router.post("/", controllers_employee.add);// save an employee
+
+c. add in controllers/employee_c.js    // add this new function
+
+    add: async(req, res)=>{
+        try{
+            console.log(req.body);
+            var employee  = new models_employee(req.body);
+            var result = await employee.save();
+            res.send(result);
+        }catch(err){
+            res.status(500).send(err);
+        }
+    }
+
+d. npm i body-parser --save
+
+e.// in routes\employee_r.js add the body-parser
+const bodyParser = require('body-parser')
+employee_router.use(bodyParser.urlencoded({extended: true}))
+//  employee_router.use(bodyParser.json())
+
+================================================================================================
+/** Step 14 - Delete a Record
+
+a. in routes\employee_r.js add
+employee_router.delete("/:id", controllers_employee.delete);// Delete a Record
+
+b. add in controllers/employee_c.js    // add this new function
+
+    delete: async(req,res)=>{
+        try{
+var result = await models_employee.deleteOne({_id: req.params.id})
+                                .exec();
+            res.send(result);
+        }catch(err){
+            res.status(500).send(err);
+        }
+    }
+
+c. Send the HTTP DELETE request using Postman
+ex, http://localhost:3000/employee/5d6788fba87e883254cf028b
+use DELETE
+
+================================================================================================
+/** Step 15 - Update an existing Record
+
+a. Create a HTML form in employee_update.html and store in root folder
+
+<!DOCTYPE html>
+<html>
+    <title>employee_update.html</title>
+<body>
+    <h2>Update employee</h2>
+<form action="http://localhost:3000/employee/5d62d1fc1c9d4400008512a6" 
+                                        method="POST">
+    _id:<br>
+    <input type="text" name="_id" placeholder="_id">
+    <br><br>
+    employee_id:<br>
+    <input type="text" name="employee_id" placeholder="employee_id">
+    <br><br>
+    employee_name:<br>
+    <input type="text" name="employee_name" placeholder="employee_name">
+    <br><br>
+    artist_name:<br>
+    <input type="text" name="artist_name" placeholder="artist_name">
+    <br><br>
+    <input type="submit" value="Submit">
+</form> 
+
+</body>
+</html>
+
+b. in routes\employee_r.js add
+router.post("/:id", controllers_employee.update);// Update an existing Record
+
+c. add in controllers/employee_c.js    // add this new function
+
+    update: async(req,res)=>{
+        try{
+//console.log('Input Id : ' + req.params.id + ' ---------------');
+var employee = await models_employee.findById(req.params.id).exec(); //find the record
+//console.log('New employee_id : ' + req.body.employee_id + '---------------');
+employee.set(req.body); //set the updated details
+var result= await employee.save(); //save the record
+res.send('Output : ' + result);
+        }catch(err){
+            res.status(500).send(err);
+        }
+    }
+
+d. Open employee_update.html in Browser. Set the Form values with Database value and change some
+field values in the form, but do not change _id value, and Submit then check in DB
+

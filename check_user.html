@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>check_user.html</title>
+    <style>
+        .mandatory{color:red;}
+    </style>
+    </head>
+<body>
+    <h2>User Login</h2>
+<form action="http://localhost:3000/user/check" method="POST">
+    <span class="mandatory">*</span> Email Id:<br>
+    <input type="email" name="email_id" placeholder="Email Id">
+    <br><br>
+    <span class="mandatory">*</span> Password:<br>
+    <input type="password" name="pass_word" placeholder="Pass word">
+    <br><br>
+    <input type="submit" value="Submit">
+</form> 
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+List of Routes
+==============
+http://localhost:3000   GET method
+        => Amar REST APIs Home page
+http://localhost:3000/user  GET method
+        => Users List in JSON
+http://localhost:3000/user/table    GET method
+        => Users List in HTML Table format
+http://localhost:3000/user/5d79da6ef0f37f02cc6cf3ab     GET method
+        => An User record in JSON
+http://localhost:3000/user  POST method
+        => Save an user Record / Save Register Form data.
+http://localhost:3000/user/check  POST method
+        => Validate an user / If valid then send a JWT token back to login user
+
+http://localhost:3000/item  GET method with valid JWT
+        => items List in JSON
+http://localhost:3000/item/table    GET method with valid JWT
+        => items List in HTML Table format
+http://localhost:3000/item/5d79da6ef0f37f02cc6cf3ab     GET method with valid JWT
+        => An item record in JSON
+http://localhost:3000/item  POST method with valid JWT
+        => Save an item Record
+
+Technology : Node.js, Express, MongoDB
+
+Features :
+1. Implemented Coding Standards, Alligned neatly & Variable names are self explanatory
+2. Configuration Management techniques used, No hard coding
+3. RESTful APIs
+4. Supports CRUD
+5. Secured REST APIs using JWT
+6. Simple
+7. Less Coding
+8. Implemented MVC
+9. Comments given
+10. Angular application can use this REST APIs
+11. Exception Handling & Error Handling done to some extend, try & catch also used
+12. Used Mongoose Model which supports define Schema (table Struture), 
+    Can give some constraints such as unique & also specify the Data type

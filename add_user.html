@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>add_user.html</title>
+    <style>
+        .mandatory{color:red;}
+    </style>
+    </head>
+<body>
+<h1>Add an User</h1>
+<form action="http://localhost:3000/user" method="POST">
+    <span class="mandatory">*</span> User Name:<br>
+    <input type="text" name="user_name" placeholder="User Name">
+    <br><br>
+    <span class="mandatory">*</span> Email Id:<br>
+    <input type="email" name="email_id" placeholder="Email Id">
+    <br><br>
+    <span class="mandatory">*</span> Password:<br>
+    <input type="password" name="pass_word" placeholder="Password">
+    <br><br>
+    <input type="submit" value="Submit">
+</form> 
+</body>
+</html>

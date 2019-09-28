@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>add_item.html</title>
+    <style>
+        .mandatory{color:red;}
+    </style>
+    </head>
+<body>
+<h1>Add an item</h1>
+<form action="http://localhost:3000/item" method="POST">
+    <span class="mandatory">*</span> Item Name:<br>
+    <input type="text" name="item_name" placeholder="Item Name">
+    <br><br>
+    Description:<br>
+    <textarea name="description" rows="6" cols="80"></textarea>
+    <!-- <input type="text" name="description" placeholder="Item Description"> -->
+    <br><br>
+    Image Name:<br>
+    <input type="text" name="image_name" placeholder="Image Name">
+    <br><br>
+    <span class="mandatory">*</span> Cost:<br>
+    <input type="text" name="cost" placeholder="Cost">
+    <br><br>
+    <input type="submit" value="Submit">
+</form> 
+</body>
+</html>
